@@ -60,6 +60,16 @@ func (s *UserService) Create(name string, fullName string, password string) (*db
 	return newUser, nil
 }
 
+// Find returns user by ID.
+func (s *UserService) Find(id uint) (*db.User, error) {
+	user := s.repo.Find(id)
+
+	if user.ID == 0 {
+		return nil, errors.New("User not found")
+	}
+	return user, nil
+}
+
 // Update updates a user and returns it.
 func (s *UserService) Update(id uint, name string, fullName string) (*db.User, error) {
 	user := s.repo.Find(id)

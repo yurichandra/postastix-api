@@ -30,6 +30,16 @@ func TestUserCreate(t *testing.T) {
 	}
 }
 
+func TestUserFind(t *testing.T) {
+	user, err := userSrv.Find(1)
+	if err != nil {
+		t.Errorf(err.Error())
+	}
+	if user.ID != 1 {
+		t.Errorf("Find() does not return the specified user")
+	}
+}
+
 func TestUserUpdate(t *testing.T) {
 	updatedUser, err := userSrv.Update(4, "johnbeep", "John Beep")
 	if err != nil {
