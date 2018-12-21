@@ -38,8 +38,6 @@ func GetAllUsers(w http.ResponseWriter, r *http.Request) {
 		}
 	})
 
-	fmt.Println(payload)
-
 	res, err := json.Marshal(payload)
 	if err != nil {
 		fmt.Println(err.Error())
