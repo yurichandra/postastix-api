@@ -22,7 +22,7 @@ func createNotFoundResponse(message string) *errorResponse {
 	}
 
 	return &errorResponse{
-		HTTPStatusCode: 404,
+		HTTPStatusCode: http.StatusNotFound,
 		Error:          message,
 	}
 }
@@ -33,7 +33,7 @@ func createBadRequestResponse(message string) *errorResponse {
 	}
 
 	return &errorResponse{
-		HTTPStatusCode: 401,
+		HTTPStatusCode: http.StatusBadRequest,
 		Error:          message,
 	}
 }
@@ -44,7 +44,7 @@ func createUnprocessableEntityResponse(message string) *errorResponse {
 	}
 
 	return &errorResponse{
-		HTTPStatusCode: 422,
+		HTTPStatusCode: http.StatusUnprocessableEntity,
 		Error:          message,
 	}
 }
