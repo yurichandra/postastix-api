@@ -20,7 +20,10 @@ func createRouter() *chi.Mux {
 		w.Write(res)
 	})
 
-	router.Get("/v1/users", handler.GetAllUsers)
+	// User routes
+	router.Route("/v1/users", func(r chi.Router) {
+		r.Get("/", handler.GetAllUsers)
+	})
 
 	return router
 }
