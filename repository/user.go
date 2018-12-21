@@ -2,6 +2,7 @@ package repository
 
 import "github.com/dewadg/postastix-api/db"
 
+// UserRepository represents repository of User.
 type UserRepository struct{}
 
 // Get returns all users.
