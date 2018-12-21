@@ -1,11 +1,11 @@
 package handler
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 
 	"github.com/dewadg/postastix-api/db"
+	"github.com/go-chi/render"
 )
 
 type userResponse struct {
@@ -16,31 +16,38 @@ type userResponse struct {
 	UpdatedAt string `json:"updatedAt"`
 }
 
-func mapUsers(users []*db.User, f func(item *db.User) interface{}) []interface{} {
-	output := make([]interface{}, 0)
+type userListResponse []*userListResponse
+
+func (u *userResponse) Render(w http.ResponseWriter, r *http.Request) error {
+	return nil
+}
+
+func createUserReponse(user *db.User) *userResponse {
+	return &userResponse{
+		ID:        user.ID,
+		Name:      user.Name,
+		FullName:  user.FullName,
+		CreatedAt: user.CreatedAt.Format("2006-01-02 15:04:05"),
+		UpdatedAt: user.UpdatedAt.Format("2006-01-02 15:04:05"),
+	}
+}
+
+func createUserListResponse(users []*db.User) []render.Renderer {
+	list := make([]render.Renderer, 0)
 
 	for _, user := range users {
-		output = append(output, f(user))
+		list = append(list, createUserReponse(user))
 	}
 
-	return output
+	return list
 }
 
 // GetAllUsers retrieves users and displays it as JSON.
 func GetAllUsers(w http.ResponseWriter, r *http.Request) {
-	payload := mapUsers(userService.Get(), func(item *db.User) interface{} {
-		return userResponse{
-			ID:        item.ID,
-			Name:      item.Name,
-			FullName:  item.FullName,
-			CreatedAt: item.CreatedAt.Format("2006-01-02 15:04:05"),
-			UpdatedAt: item.UpdatedAt.Format("2006-01-01 15:04:05"),
-		}
-	})
+	payload := createUserListResponse(userService.Get())
 
-	res, err := json.Marshal(payload)
-	if err != nil {
-		fmt.Println(err.Error())
+	if err := render.RenderList(w, r, payload); err != nil {
+		fmt.Println("Error")
+		return
 	}
-	w.Write(res)
 }
