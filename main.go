@@ -22,6 +22,10 @@ func main() {
 		handler.Init()
 		app.Run()
 		break
+	case "migrate":
+		fmt.Println("Running migrations...")
+		db.Migrate()
+		fmt.Println("Migrations run successfully")
 	default:
 		fmt.Println("Invalid command")
 	}
