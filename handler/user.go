@@ -1,11 +1,21 @@
 package handler
 
 import (
+	"context"
 	"fmt"
 	"net/http"
+	"strconv"
+
+	"github.com/go-chi/chi"
 
 	"github.com/dewadg/postastix-api/db"
 	"github.com/go-chi/render"
+)
+
+type key string
+
+const (
+	userInCtx key = "user"
 )
 
 type userResponse struct {
@@ -42,6 +52,28 @@ func createUserListResponse(users []*db.User) []render.Renderer {
 	return list
 }
 
+// UserCtx fetches user and set it as context value.
+func UserCtx(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		var idParam string
+		if idParam = chi.URLParam(r, "id"); idParam == "" {
+			render.Render(w, r, createBadRequestResponse(""))
+		}
+		id, _ := strconv.ParseUint(idParam, 10, 8)
+
+		user, err := userService.Find(uint(id))
+		if err != nil {
+			if err.Error() == "User not found" {
+				render.Render(w, r, createNotFoundResponse(err.Error()))
+				return
+			}
+		}
+
+		ctx := context.WithValue(r.Context(), userInCtx, user)
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
+}
+
 // GetAllUsers retrieves users and displays it as JSON.
 func GetAllUsers(w http.ResponseWriter, r *http.Request) {
 	payload := createUserListResponse(userService.Get())
@@ -50,4 +82,10 @@ func GetAllUsers(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Error")
 		return
 	}
+}
+
+// GetOneUser retrieves a user and displays it as JSON.
+func GetOneUser(w http.ResponseWriter, r *http.Request) {
+	user := r.Context().Value(userInCtx).(*db.User)
+	render.Render(w, r, createUserReponse(user))
 }
