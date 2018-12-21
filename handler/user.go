@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -40,6 +41,25 @@ type storeUserRequest struct {
 }
 
 func (s *storeUserRequest) Bind(r *http.Request) error {
+	return nil
+}
+
+func (s *storeUserRequest) Validate() error {
+	if s.Name == "" {
+		return errors.New("Property `name` cannot be empty")
+	}
+	if s.FullName == "" {
+		return errors.New("Property `fullName` cannot be empty")
+	}
+	if s.Password == "" {
+		return errors.New("Property `password` cannot be empty")
+	}
+	if s.ConfirmPassword == "" {
+		return errors.New("Property `confirmPassword` cannot be empty")
+	}
+	if s.Password != s.ConfirmPassword {
+		return errors.New("Property `password` and `confirmPassword` not match")
+	}
 	return nil
 }
 
@@ -103,8 +123,8 @@ func StoreUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if payload.Password != payload.ConfirmPassword {
-		render.Render(w, r, createUnprocessableEntityResponse("Password not match"))
+	if err := payload.Validate(); err != nil {
+		render.Render(w, r, createUnprocessableEntityResponse(err.Error()))
 		return
 	}
 
