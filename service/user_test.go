@@ -4,12 +4,10 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/dewadg/postastix-api/repository"
-
 	"github.com/joho/godotenv"
 )
 
-var userSrv *userService
+var userSrv *UserService
 
 func init() {
 	err := godotenv.Load("../.env.test")
@@ -17,9 +15,7 @@ func init() {
 		fmt.Println("No .env file specified")
 	}
 
-	userSrv = &userService{
-		repo: repository.GetUserRepository(),
-	}
+	userSrv = GetUserService()
 }
 
 func TestUserCreate(t *testing.T) {

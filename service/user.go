@@ -9,16 +9,16 @@ import (
 )
 
 // UserService represents a service of User.
-type userService struct {
+type UserService struct {
 	repo repository.UserRepositoryContract
 }
 
 // Get returns available users.
-func (s *userService) Get() []*db.User {
+func (s *UserService) Get() []*db.User {
 	return s.repo.Get()
 }
 
-func (s *userService) isUsernameUnique(name string, exceptID uint) bool {
+func (s *UserService) isUsernameUnique(name string, exceptID uint) bool {
 	foundUser := &db.User{}
 	query := db.Get().Where("name = ?", name)
 
@@ -31,7 +31,7 @@ func (s *userService) isUsernameUnique(name string, exceptID uint) bool {
 	return foundUser.ID == 0
 }
 
-func (s *userService) generatePassword(password string) (string, error) {
+func (s *UserService) generatePassword(password string) (string, error) {
 	hashed, err := bcrypt.GenerateFromPassword([]byte(password), 15)
 	if err != nil {
 		return "", errors.New("Failed to generate password hash")
@@ -40,7 +40,7 @@ func (s *userService) generatePassword(password string) (string, error) {
 }
 
 // Create stores new user and returns it.
-func (s *userService) Create(name string, fullName string, password string) (*db.User, error) {
+func (s *UserService) Create(name string, fullName string, password string) (*db.User, error) {
 	hashedPassword, err := s.generatePassword(password)
 	if err != nil {
 		return nil, err
@@ -61,7 +61,7 @@ func (s *userService) Create(name string, fullName string, password string) (*db
 }
 
 // Update updates a user and returns it.
-func (s *userService) Update(id uint, name string, fullName string) (*db.User, error) {
+func (s *UserService) Update(id uint, name string, fullName string) (*db.User, error) {
 	user := s.repo.Find(id)
 
 	if user.ID == 0 {
@@ -80,7 +80,7 @@ func (s *userService) Update(id uint, name string, fullName string) (*db.User, e
 }
 
 // Delete deletes a user.
-func (s *userService) Delete(id uint) error {
+func (s *UserService) Delete(id uint) error {
 	if s.repo.Find(id).ID == 0 {
 		return errors.New("User not found")
 	}
@@ -90,7 +90,7 @@ func (s *userService) Delete(id uint) error {
 }
 
 // ChangePassword changes a user password.
-func (s *userService) ChangePassword(id uint, oldPassword string, newPassword string, confirmNewPassword string) error {
+func (s *UserService) ChangePassword(id uint, oldPassword string, newPassword string, confirmNewPassword string) error {
 	user := s.repo.Find(id)
 	if user.ID == 0 {
 		return errors.New("User not found")
