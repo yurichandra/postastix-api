@@ -8,7 +8,7 @@ import (
 
 type errorResponse struct {
 	HTTPStatusCode int    `json:"-"`
-	Error          string `json:"errors"`
+	Error          string `json:"error"`
 }
 
 func (e *errorResponse) Render(w http.ResponseWriter, r *http.Request) error {
@@ -34,6 +34,17 @@ func createBadRequestResponse(message string) *errorResponse {
 
 	return &errorResponse{
 		HTTPStatusCode: 401,
+		Error:          message,
+	}
+}
+
+func createUnprocessableEntityResponse(message string) *errorResponse {
+	if message == "" {
+		message = "Unprocessable entity"
+	}
+
+	return &errorResponse{
+		HTTPStatusCode: 422,
 		Error:          message,
 	}
 }
