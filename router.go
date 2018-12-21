@@ -28,6 +28,7 @@ func createRouter() *chi.Mux {
 		r.Route("/{id}", func(r chi.Router) {
 			r.Use(handler.UserCtx)
 			r.Get("/", handler.GetOneUser)
+			r.Patch("/", handler.UpdateUser)
 		})
 	})
 

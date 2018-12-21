@@ -63,6 +63,25 @@ func (s *storeUserRequest) Validate() error {
 	return nil
 }
 
+type updateUserRequest struct {
+	Name     string `json:"name"`
+	FullName string `json:"fullName"`
+}
+
+func (s *updateUserRequest) Bind(r *http.Request) error {
+	return nil
+}
+
+func (s *updateUserRequest) Validate() error {
+	if s.Name == "" {
+		return errors.New("Property `name` cannot be empty")
+	}
+	if s.FullName == "" {
+		return errors.New("Property `fullName` cannot be empty")
+	}
+	return nil
+}
+
 func createUserReponse(user *db.User) *userResponse {
 	return &userResponse{
 		ID:        user.ID,
@@ -142,4 +161,27 @@ func StoreUser(w http.ResponseWriter, r *http.Request) {
 func GetOneUser(w http.ResponseWriter, r *http.Request) {
 	user := r.Context().Value(userInCtx).(*db.User)
 	render.Render(w, r, createUserReponse(user))
+}
+
+// UpdateUser updates a user and displays it as JSON.
+func UpdateUser(w http.ResponseWriter, r *http.Request) {
+	payload := new(updateUserRequest)
+	if err := render.Bind(r, payload); err != nil {
+		render.Render(w, r, createBadRequestResponse(""))
+		return
+	}
+
+	if err := payload.Validate(); err != nil {
+		render.Render(w, r, createUnprocessableEntityResponse(err.Error()))
+		return
+	}
+
+	user := r.Context().Value(userInCtx).(*db.User)
+	updatedUser, err := userService.Update(user.ID, payload.Name, payload.FullName)
+	if err != nil {
+		render.Render(w, r, createUnprocessableEntityResponse(err.Error()))
+		return
+	}
+
+	render.Render(w, r, createUserReponse(updatedUser))
 }
