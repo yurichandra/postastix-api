@@ -23,6 +23,7 @@ func createRouter() *chi.Mux {
 	// User routes
 	router.Route("/v1/users", func(r chi.Router) {
 		r.Get("/", handler.GetAllUsers)
+		r.Post("/", handler.StoreUser)
 
 		r.Route("/{id}", func(r chi.Router) {
 			r.Use(handler.UserCtx)

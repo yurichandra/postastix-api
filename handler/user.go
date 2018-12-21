@@ -26,9 +26,20 @@ type userResponse struct {
 	UpdatedAt string `json:"updatedAt"`
 }
 
+func (u *userResponse) Render(w http.ResponseWriter, r *http.Request) error {
+	return nil
+}
+
 type userListResponse []*userListResponse
 
-func (u *userResponse) Render(w http.ResponseWriter, r *http.Request) error {
+type storeUserRequest struct {
+	Name            string `json:"name"`
+	FullName        string `json:"fullName"`
+	Password        string `json:"password"`
+	ConfirmPassword string `json:"confirmPassword"`
+}
+
+func (s *storeUserRequest) Bind(r *http.Request) error {
 	return nil
 }
 
@@ -82,6 +93,29 @@ func GetAllUsers(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Error")
 		return
 	}
+}
+
+// StoreUser stores a user and displays it as JSON.
+func StoreUser(w http.ResponseWriter, r *http.Request) {
+	payload := new(storeUserRequest)
+	if err := render.Bind(r, payload); err != nil {
+		render.Render(w, r, createBadRequestResponse(""))
+		return
+	}
+
+	if payload.Password != payload.ConfirmPassword {
+		render.Render(w, r, createUnprocessableEntityResponse("Password not match"))
+		return
+	}
+
+	user, err := userService.Create(payload.Name, payload.FullName, payload.Password)
+	if err != nil {
+		render.Render(w, r, createUnprocessableEntityResponse(err.Error()))
+		return
+	}
+
+	render.Status(r, http.StatusCreated)
+	render.Render(w, r, createUserReponse(user))
 }
 
 // GetOneUser retrieves a user and displays it as JSON.
