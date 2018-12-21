@@ -185,3 +185,12 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	render.Render(w, r, createUserReponse(updatedUser))
 }
+
+// DestroyUser deletes a user by ID.
+func DestroyUser(w http.ResponseWriter, r *http.Request) {
+	user := r.Context().Value(userInCtx).(*db.User)
+	if err := userService.Delete(user.ID); err != nil {
+		render.Render(w, r, createInternalServerErrorResponse(""))
+	}
+	w.Write([]byte(""))
+}

@@ -48,3 +48,14 @@ func createUnprocessableEntityResponse(message string) *errorResponse {
 		Error:          message,
 	}
 }
+
+func createInternalServerErrorResponse(message string) *errorResponse {
+	if message == "" {
+		message = "Internal server error"
+	}
+
+	return &errorResponse{
+		HTTPStatusCode: http.StatusInternalServerError,
+		Error:          message,
+	}
+}

@@ -29,6 +29,7 @@ func createRouter() *chi.Mux {
 			r.Use(handler.UserCtx)
 			r.Get("/", handler.GetOneUser)
 			r.Patch("/", handler.UpdateUser)
+			r.Delete("/", handler.DestroyUser)
 		})
 	})
 
