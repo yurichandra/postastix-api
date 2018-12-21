@@ -2,10 +2,10 @@ package repository
 
 import "github.com/dewadg/postastix-api/db"
 
-type userRepository struct{}
+type UserRepository struct{}
 
 // Get returns all users.
-func (r *userRepository) Get() []*db.User {
+func (r *UserRepository) Get() []*db.User {
 	users := make([]*db.User, 0)
 
 	db.Get().Find(&users)
@@ -14,14 +14,14 @@ func (r *userRepository) Get() []*db.User {
 }
 
 // Push adds the instance to the repository.
-func (r *userRepository) Push(new *db.User) *db.User {
+func (r *UserRepository) Push(new *db.User) *db.User {
 	db.Get().Create(new)
 
 	return new
 }
 
 // Find returns user by ID.
-func (r *userRepository) Find(id uint) *db.User {
+func (r *UserRepository) Find(id uint) *db.User {
 	user := new(db.User)
 	db.Get().Where("id = ?", id).First(user)
 
@@ -29,6 +29,6 @@ func (r *userRepository) Find(id uint) *db.User {
 }
 
 // Delete removes a user by ID.
-func (r *userRepository) Delete(id uint) {
+func (r *UserRepository) Delete(id uint) {
 	db.Get().Where("id = ?", id).Delete(db.User{})
 }

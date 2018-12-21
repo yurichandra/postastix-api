@@ -10,7 +10,7 @@ type UserRepositoryContract interface {
 	Delete(id uint)
 }
 
-// GetUserRepository returns new userRepository instance.
+// GetUserRepository returns new UserRepository instance.
 func GetUserRepository() UserRepositoryContract {
-	return new(userRepository)
+	return new(UserRepository)
 }
