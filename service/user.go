@@ -32,7 +32,7 @@ func (s *UserService) isUsernameUnique(name string, exceptID uint) bool {
 }
 
 func (s *UserService) generatePassword(password string) (string, error) {
-	hashed, err := bcrypt.GenerateFromPassword([]byte(password), 15)
+	hashed, err := bcrypt.GenerateFromPassword([]byte(password), 10)
 	if err != nil {
 		return "", errors.New("Failed to generate password hash")
 	}
@@ -41,13 +41,13 @@ func (s *UserService) generatePassword(password string) (string, error) {
 
 // Create stores new user and returns it.
 func (s *UserService) Create(name string, fullName string, password string) (*db.User, error) {
+	if !s.isUsernameUnique(name, 0) {
+		return nil, errors.New("Username already taken")
+	}
+
 	hashedPassword, err := s.generatePassword(password)
 	if err != nil {
 		return nil, err
-	}
-
-	if !s.isUsernameUnique(name, 0) {
-		return nil, errors.New("Username already taken")
 	}
 
 	newUser := &db.User{
