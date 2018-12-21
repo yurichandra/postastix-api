@@ -23,7 +23,7 @@ func (s *UserService) isUsernameUnique(name string, exceptID uint) bool {
 	query := db.Get().Where("name = ?", name)
 
 	if exceptID != 0 {
-		query.Where("ID != ?", exceptID)
+		query = query.Where("ID != ?", exceptID)
 	}
 
 	query.First(foundUser)
