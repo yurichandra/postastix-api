@@ -1,0 +1,11 @@
+version: "3.6"
+
+services:
+  postastix:
+    container_name: postastix
+    build: .
+    ports:
+      - "80:3000"
+      - "443:3001"
+    env_file:
+      - .env.production
