@@ -1,5 +1,9 @@
-app
+# Git
+.git
+
+# Env
 .env.example
 .env
-.env.test
-.git
+
+# Compilation output
+app
