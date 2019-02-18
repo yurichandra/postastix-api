@@ -11,6 +11,8 @@ import (
 	"github.com/go-chi/chi"
 )
 
+const version = 1
+
 func createRouter() chi.Router {
 	handler.InitServices()
 	r := chi.NewRouter()
@@ -18,7 +20,7 @@ func createRouter() chi.Router {
 	r.Get("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		payload := map[string]interface{}{
 			"name":    "Postastix API",
-			"version": 1,
+			"version": version,
 		}
 		res, _ := json.Marshal(payload)
 		w.Write(res)
