@@ -2,10 +2,9 @@ package main
 
 import (
 	"fmt"
+	"net/http"
 	"os"
 
-	"github.com/dewadg/postastix-api/db"
-	"github.com/dewadg/postastix-api/handler"
 	"github.com/joho/godotenv"
 )
 
@@ -15,17 +14,13 @@ func main() {
 		fmt.Println("No .env file specified")
 	}
 
-	app := createApp(db.Get(), createRouter())
-
 	switch command() {
 	case "serve":
-		handler.Init()
-		app.Run()
+		router := createRouter()
+
+		fmt.Printf("App running on port %s\n", os.Getenv("APP_PORT"))
+		http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("APP_PORT")), router)
 		break
-	case "migrate":
-		fmt.Println("Running migrations...")
-		db.Migrate()
-		fmt.Println("Migrations run successfully")
 	default:
 		fmt.Println("Invalid command")
 	}

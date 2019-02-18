@@ -1,37 +1,15 @@
 package main
 
 import (
-	"encoding/json"
-	"net/http"
+	"postastix-api/handler"
 
-	"github.com/dewadg/postastix-api/handler"
 	"github.com/go-chi/chi"
-	"github.com/go-chi/render"
 )
 
-func createRouter() *chi.Mux {
-	router := chi.NewRouter()
-	router.Use(render.SetContentType(render.ContentTypeJSON))
+func createRouter() chi.Router {
+	r := chi.NewRouter()
 
-	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		payload := "Postastix API v1"
-		res, _ := json.Marshal(payload)
+	r.Mount("/users", handler.UserRoutes())
 
-		w.Write(res)
-	})
-
-	// User routes
-	router.Route("/v1/users", func(r chi.Router) {
-		r.Get("/", handler.GetAllUsers)
-		r.Post("/", handler.StoreUser)
-
-		r.Route("/{id}", func(r chi.Router) {
-			r.Use(handler.UserCtx)
-			r.Get("/", handler.GetOneUser)
-			r.Patch("/", handler.UpdateUser)
-			r.Delete("/", handler.DestroyUser)
-		})
-	})
-
-	return router
+	return r
 }
