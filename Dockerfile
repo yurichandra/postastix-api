@@ -1,13 +1,17 @@
-FROM golang
-
-ADD . /go/src/github.com/dewadg/postastix-api
+FROM golang AS build
 
 WORKDIR /go/src/github.com/dewadg/postastix-api
 
-COPY .env.production .env
+ADD . .
 
-RUN go get ./...
-RUN go install
-RUN /go/bin/postastix-api migrate
+RUN go get -v ./...
+RUN go build *.go
 
-ENTRYPOINT /go/bin/postastix-api serve
+FROM alpine
+
+WORKDIR /usr/bin
+
+COPY --from=build /go/src/github.com/dewadg/postastix-api/app .
+RUN chmod a+x app
+
+CMD ["app", "serve"]
