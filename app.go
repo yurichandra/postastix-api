@@ -22,6 +22,6 @@ func createApp(db *gorm.DB, router *chi.Mux) *app {
 }
 
 func (a *app) Run() {
-	fmt.Printf("App running on port %s\n", os.Getenv("HTTP_PORT"))
-	http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("HTTP_PORT")), a.router)
+	fmt.Printf("App running on port %s\n", os.Getenv("APP_PORT"))
+	http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("APP_PORT")), a.router)
 }
