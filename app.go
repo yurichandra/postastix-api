@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"postastix-api/db"
 	"postastix-api/handler"
 
 	"github.com/go-chi/chi"
@@ -27,4 +28,10 @@ func serveHTTP() {
 
 	fmt.Printf("App running on port %s\n", port)
 	http.ListenAndServe(fmt.Sprintf(":%s", port), router)
+}
+
+func runMigration() {
+	fmt.Println("Running migrations...")
+	db.Migrate()
+	fmt.Println("Migrated successfully")
 }
