@@ -14,6 +14,13 @@ type StoreUserRequest struct {
 	ConfirmPassword string `json:"confirmPassword"`
 }
 
+// UpdateUserRequest represents request object for
+// updating a user
+type UpdateUserRequest struct {
+	Name     string `json:"name"`
+	FullName string `json:"fullName"`
+}
+
 // Bind checks the request.
 func (req *StoreUserRequest) Bind(r *http.Request) error {
 	if req.Name == "" {
@@ -30,6 +37,17 @@ func (req *StoreUserRequest) Bind(r *http.Request) error {
 	}
 	if req.Password != req.ConfirmPassword {
 		return errors.New("Field `password` and `confirmPassword` not match")
+	}
+	return nil
+}
+
+// Bind checks the request.
+func (req *UpdateUserRequest) Bind(r *http.Request) error {
+	if req.Name == "" {
+		return errors.New("Field `name` cannot be empty")
+	}
+	if req.FullName == "" {
+		return errors.New("Field `fullName` cannot be empty")
 	}
 	return nil
 }
