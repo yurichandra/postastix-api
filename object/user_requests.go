@@ -1,6 +1,9 @@
 package object
 
-import "errors"
+import (
+	"errors"
+	"net/http"
+)
 
 // StoreUserRequest represents request object for
 // creating a user.
@@ -11,22 +14,22 @@ type StoreUserRequest struct {
 	ConfirmPassword string `json:"confirmPassword"`
 }
 
-// Validate request.
-func (r *StoreUserRequest) Validate() error {
-	if r.Name == "" {
-		return errors.New("Property `name` cannot be empty")
+// Bind checks the request.
+func (req *StoreUserRequest) Bind(r *http.Request) error {
+	if req.Name == "" {
+		return errors.New("Field `name` cannot be empty")
 	}
-	if r.FullName == "" {
-		return errors.New("Property `fullName` cannot be empty")
+	if req.FullName == "" {
+		return errors.New("Field `fullName` cannot be empty")
 	}
-	if r.Password == "" {
-		return errors.New("Property `password` cannot be empty")
+	if req.Password == "" {
+		return errors.New("Field `password` cannot be empty")
 	}
-	if r.ConfirmPassword == "" {
-		return errors.New("Property `confirmPassword` cannot be empty")
+	if req.ConfirmPassword == "" {
+		return errors.New("Field `confirmPassword` cannot be empty")
 	}
-	if r.Password != r.ConfirmPassword {
-		return errors.New("Property `password` and `confirmPassword` not match")
+	if req.Password != req.ConfirmPassword {
+		return errors.New("Field `password` and `confirmPassword` not match")
 	}
 	return nil
 }
