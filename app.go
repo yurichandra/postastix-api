@@ -9,6 +9,7 @@ import (
 	"postastix-api/handler"
 
 	"github.com/go-chi/chi"
+	"github.com/go-chi/render"
 )
 
 const version = 1
@@ -16,6 +17,7 @@ const version = 1
 func createRouter() chi.Router {
 	handler.InitServices()
 	r := chi.NewRouter()
+	r.Use(render.SetContentType(render.ContentTypeJSON))
 
 	r.Get("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		payload := map[string]interface{}{
