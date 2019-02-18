@@ -3,4 +3,4 @@
 .env.test
 
 # Compilation output
-app
+main
