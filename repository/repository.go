@@ -1,16 +1,13 @@
 package repository
 
-import "github.com/dewadg/postastix-api/db"
+import (
+	"postastix-api/model"
+)
 
 // UserRepositoryContract represents contract for UserRepository
 type UserRepositoryContract interface {
-	Get() []*db.User
-	Push(new *db.User) *db.User
-	Find(id uint) *db.User
+	Get() []model.User
+	Push(new model.User)
+	Find(id uint) model.User
 	Delete(id uint)
-}
-
-// GetUserRepository returns new UserRepository instance.
-func GetUserRepository() UserRepositoryContract {
-	return new(UserRepository)
 }

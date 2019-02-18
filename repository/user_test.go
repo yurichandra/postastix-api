@@ -2,13 +2,14 @@ package repository
 
 import (
 	"fmt"
+	"postastix-api/model"
 	"testing"
 
-	"github.com/dewadg/postastix-api/db"
 	"github.com/joho/godotenv"
 )
 
-var userRepo *UserRepository
+var _testUserRepo *UserRepository
+var _testUserID uint
 
 func init() {
 	err := godotenv.Load("../.env.test")
@@ -16,34 +17,35 @@ func init() {
 		fmt.Println("No .env file specified")
 	}
 
-	userRepo = new(UserRepository)
+	_testUserRepo = NewUserRepository()
 }
 
 func TestUserGet(t *testing.T) {
-	userRepo.Get()
+	_testUserRepo.Get()
 }
 
 func TestUserPush(t *testing.T) {
-	newUser := &db.User{
+	newUser := model.User{
 		Name:     "johndoe",
 		FullName: "John Doe",
 		Password: "doejohn",
 	}
 
-	userRepo.Push(newUser)
+	_testUserRepo.Push(&newUser)
+	_testUserID = newUser.ID
 }
 
 func TestUserFind(t *testing.T) {
-	user := userRepo.Find(1)
+	user := _testUserRepo.Find(_testUserID)
 
-	if user.Name != "dewadg" {
+	if user.Name != "johndoe" {
 		t.Errorf("Find() returns wrong user.")
 	}
 }
 
 func TestUserDelete(t *testing.T) {
-	userRepo.Delete(2)
-	user := userRepo.Find(2)
+	_testUserRepo.Delete(_testUserID)
+	user := _testUserRepo.Find(_testUserID)
 
 	if user.ID != 0 {
 		t.Errorf("Delete() failed to remove user")
