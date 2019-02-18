@@ -17,6 +17,7 @@ const version = 1
 func createRouter() chi.Router {
 	handler.InitServices()
 	r := chi.NewRouter()
+
 	r.Use(render.SetContentType(render.ContentTypeJSON))
 
 	r.Get("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
