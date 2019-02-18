@@ -3,6 +3,7 @@ package db
 import (
 	"fmt"
 	"os"
+	"postastix-api/model"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql" // MySQL driver
@@ -39,8 +40,8 @@ func Get() *gorm.DB {
 // Migrate creates tables for available models.
 func Migrate() {
 	Get().AutoMigrate(
-		&User{},
-		&Category{},
-		&Post{},
+		&model.User{},
+		&model.Category{},
+		&model.Post{},
 	)
 }
