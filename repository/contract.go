@@ -7,7 +7,7 @@ import (
 // UserRepositoryContract represents contract for UserRepository
 type UserRepositoryContract interface {
 	Get() []model.User
-	Push(new model.User)
+	Push(new *model.User)
 	Find(id uint) model.User
 	Delete(id uint)
 }
