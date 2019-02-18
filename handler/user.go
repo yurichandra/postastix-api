@@ -17,6 +17,7 @@ func UserRoutes() chi.Router {
 	r := chi.NewRouter()
 
 	r.Get("/", getUsers)
+	r.Post("/", storeUser)
 	r.Route("/{userID}", func(r chi.Router) {
 		r.Use(userContext)
 		r.Get("/", getUser)
@@ -46,6 +47,26 @@ func getUsers(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err.Error())
 		return
 	}
+}
+
+func storeUser(w http.ResponseWriter, r *http.Request) {
+	payload := object.StoreUserRequest{}
+	if err := render.Bind(r, &payload); err != nil {
+		render.Render(w, r, createUnprocessableEntityResponse(err.Error()))
+	}
+
+	user, err := userService.Create(
+		payload.Name,
+		payload.FullName,
+		payload.Password,
+	)
+	if err != nil {
+		render.Render(w, r, createUnprocessableEntityResponse(err.Error()))
+		return
+	}
+
+	render.Status(r, http.StatusCreated)
+	render.Render(w, r, object.CreateUserResponse(user))
 }
 
 func getUser(w http.ResponseWriter, r *http.Request) {
