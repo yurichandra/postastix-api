@@ -94,7 +94,7 @@ func (s *UserService) Update(id uint, name string, fullName string) (model.User,
 
 	user.Name = name
 	user.FullName = fullName
-	db.Get().Save(user)
+	db.Get().Save(&user)
 
 	return user, nil
 }
