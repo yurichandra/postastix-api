@@ -8,8 +8,10 @@ import (
 	"github.com/joho/godotenv"
 )
 
-var _testUserRepo *UserRepository
-var _testUserID uint
+var _mockUserID uint
+var _mockUserName string
+var _mockUserFullName string
+var _mockUserPassword string
 
 func init() {
 	err := godotenv.Load("../.env.test")
@@ -20,32 +22,40 @@ func init() {
 	_testUserRepo = NewUserRepository()
 }
 
-func TestUserGet(t *testing.T) {
-	_testUserRepo.Get()
-}
-
 func TestUserPush(t *testing.T) {
+	_mockUserName = _testFaker.Person().FirstName()
+	_mockUserFullName = _testFaker.Person().FirstNameMale()
+	_mockUserPassword = _testFaker.Lorem().Word()
+
 	newUser := model.User{
-		Name:     "johndoe",
-		FullName: "John Doe",
-		Password: "doejohn",
+		Name:     _mockUserName,
+		FullName: _mockUserFullName,
+		Password: _mockUserPassword,
 	}
 
 	_testUserRepo.Push(&newUser)
-	_testUserID = newUser.ID
+	_mockUserID = newUser.ID
+}
+
+func TestUserGet(t *testing.T) {
+	userList := _testUserRepo.Get()
+
+	if len(userList) == 0 {
+		t.Errorf("Get() does not return any user")
+	}
 }
 
 func TestUserFind(t *testing.T) {
-	user := _testUserRepo.Find(_testUserID)
+	user := _testUserRepo.Find(_mockUserID)
 
-	if user.Name != "johndoe" {
+	if user.Name != _mockUserName {
 		t.Errorf("Find() returns wrong user.")
 	}
 }
 
 func TestUserDelete(t *testing.T) {
-	_testUserRepo.Delete(_testUserID)
-	user := _testUserRepo.Find(_testUserID)
+	_testUserRepo.Delete(_mockUserID)
+	user := _testUserRepo.Find(_mockUserID)
 
 	if user.ID != 0 {
 		t.Errorf("Delete() failed to remove user")
