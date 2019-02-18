@@ -54,6 +54,7 @@ func storeUser(w http.ResponseWriter, r *http.Request) {
 	payload := object.StoreUserRequest{}
 	if err := render.Bind(r, &payload); err != nil {
 		render.Render(w, r, createUnprocessableEntityResponse(err.Error()))
+		return
 	}
 
 	user, err := userService.Create(
