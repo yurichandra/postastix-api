@@ -21,6 +21,7 @@ func UserRoutes() chi.Router {
 	r.Route("/{userID}", func(r chi.Router) {
 		r.Use(userContext)
 		r.Get("/", getUser)
+		r.Delete("/", destroyUser)
 	})
 
 	return r
@@ -78,4 +79,15 @@ func getUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	render.Render(w, r, object.CreateUserResponse(user))
+}
+
+func destroyUser(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	user, ok := ctx.Value(userCtx).(model.User)
+	if !ok {
+		render.Render(w, r, createUnprocessableEntityResponse(""))
+		return
+	}
+
+	userService.Delete(user.ID)
 }
