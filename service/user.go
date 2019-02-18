@@ -3,8 +3,10 @@ package service
 import (
 	"errors"
 
-	"github.com/dewadg/postastix-api/db"
-	"github.com/dewadg/postastix-api/repository"
+	"postastix-api/db"
+	"postastix-api/model"
+	"postastix-api/repository"
+
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -13,20 +15,28 @@ type UserService struct {
 	repo repository.UserRepositoryContract
 }
 
+// NewUserService returns new instance of user service.
+func NewUserService() *UserService {
+	return &UserService{
+		repo: repository.NewUserRepository(),
+	}
+}
+
 // Get returns available users.
-func (s *UserService) Get() []*db.User {
+func (s *UserService) Get() []model.User {
 	return s.repo.Get()
 }
 
 func (s *UserService) isUsernameUnique(name string, exceptID uint) bool {
-	foundUser := &db.User{}
+	foundUser := model.User{}
+
 	query := db.Get().Where("name = ?", name)
 
 	if exceptID != 0 {
 		query = query.Where("ID != ?", exceptID)
 	}
 
-	query.First(foundUser)
+	query.First(&foundUser)
 
 	return foundUser.ID == 0
 }
@@ -40,46 +50,46 @@ func (s *UserService) generatePassword(password string) (string, error) {
 }
 
 // Create stores new user and returns it.
-func (s *UserService) Create(name string, fullName string, password string) (*db.User, error) {
+func (s *UserService) Create(name string, fullName string, password string) (model.User, error) {
 	if !s.isUsernameUnique(name, 0) {
-		return nil, errors.New("Username already taken")
+		return model.User{}, errors.New("Username already taken")
 	}
 
 	hashedPassword, err := s.generatePassword(password)
 	if err != nil {
-		return nil, err
+		return model.User{}, err
 	}
 
-	newUser := &db.User{
+	newUser := model.User{
 		Name:     name,
 		FullName: fullName,
 		Password: hashedPassword,
 	}
-	s.repo.Push(newUser)
+	s.repo.Push(&newUser)
 
 	return newUser, nil
 }
 
 // Find returns user by ID.
-func (s *UserService) Find(id uint) (*db.User, error) {
+func (s *UserService) Find(id uint) (model.User, error) {
 	user := s.repo.Find(id)
 
 	if user.ID == 0 {
-		return nil, errors.New("User not found")
+		return model.User{}, errors.New("User not found")
 	}
 	return user, nil
 }
 
 // Update updates a user and returns it.
-func (s *UserService) Update(id uint, name string, fullName string) (*db.User, error) {
+func (s *UserService) Update(id uint, name string, fullName string) (model.User, error) {
 	user := s.repo.Find(id)
 
 	if user.ID == 0 {
-		return nil, errors.New("User not found")
+		return model.User{}, errors.New("User not found")
 	}
 
 	if !s.isUsernameUnique(name, id) {
-		return nil, errors.New("Username already taken")
+		return model.User{}, errors.New("Username already taken")
 	}
 
 	user.Name = name
@@ -121,7 +131,7 @@ func (s *UserService) ChangePassword(id uint, oldPassword string, newPassword st
 	}
 
 	user.Password = hashedPassword
-	db.Get().Save(user)
+	db.Get().Save(&user)
 
 	return nil
 }

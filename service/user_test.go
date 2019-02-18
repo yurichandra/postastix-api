@@ -1,65 +1,69 @@
 package service
 
 import (
-	"fmt"
 	"testing"
-
-	"github.com/joho/godotenv"
 )
 
-var userSrv *UserService
-
-func init() {
-	err := godotenv.Load("../.env.test")
-	if err != nil {
-		fmt.Println("No .env file specified")
-	}
-
-	userSrv = GetUserService()
-}
+var _mockUserID uint
+var _mockUserName string
+var _mockUserFullName string
+var _mockUserPassword string
 
 func TestUserCreate(t *testing.T) {
-	newUser, err := userSrv.Create("johndoe", "John Doe", "doejohn")
+	_mockUserName = _testFaker.Person().Name()
+	_mockUserFullName = _testFaker.Person().FirstNameMale()
+	_mockUserPassword = _testFaker.Lorem().Word()
+
+	newUser, err := _testUserService.Create(_mockUserName, _mockUserFullName, _mockUserPassword)
 	if err != nil {
 		t.Errorf(err.Error())
 		return
 	}
 
-	if newUser.Name != "johndoe" || newUser.FullName != "John Doe" {
+	if newUser.Name != _mockUserName || newUser.FullName != _mockUserFullName {
 		t.Errorf("Create() does not store user well")
+	}
+
+	_mockUserID = newUser.ID
+}
+
+func TestUserChangePassword(t *testing.T) {
+	_mockOldPassword := _mockUserPassword
+	_mockUserPassword = _testFaker.Lorem().Word()
+
+	err := _testUserService.ChangePassword(_mockUserID, _mockOldPassword, _mockUserPassword, _mockUserPassword)
+	if err != nil {
+		t.Errorf(err.Error())
 	}
 }
 
 func TestUserFind(t *testing.T) {
-	user, err := userSrv.Find(1)
+	user, err := _testUserService.Find(_mockUserID)
 	if err != nil {
 		t.Errorf(err.Error())
 	}
-	if user.ID != 1 {
+
+	if user.ID != _mockUserID {
 		t.Errorf("Find() does not return the specified user")
 	}
 }
 
 func TestUserUpdate(t *testing.T) {
-	updatedUser, err := userSrv.Update(4, "johnbeep", "John Beep")
+	_mockUserName = _testFaker.Person().Name()
+	_mockUserFullName = _testFaker.Person().FirstNameMale()
+
+	updatedUser, err := _testUserService.Update(_mockUserID, _mockUserName, _mockUserFullName)
 	if err != nil {
 		t.Errorf(err.Error())
 	}
 
-	if updatedUser.Name != "johnbeep" || updatedUser.FullName != "John Beep" {
+	if updatedUser.Name != _mockUserName || updatedUser.FullName != _mockUserFullName {
 		t.Errorf("Update() does not update user well")
 	}
 }
 
 func TestUserDelete(t *testing.T) {
-	err := userSrv.Delete(5)
-	if err != nil {
-		t.Errorf(err.Error())
-	}
-}
-
-func TestUserChangePassword(t *testing.T) {
-	err := userSrv.ChangePassword(7, "dudu", "dada", "dada")
+	err := _testUserService.Delete(_mockUserID)
 	if err != nil {
 		t.Errorf(err.Error())
 	}
