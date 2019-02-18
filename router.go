@@ -8,7 +8,6 @@ import (
 
 func createRouter() chi.Router {
 	r := chi.NewRouter()
-
 	r.Mount("/users", handler.UserRoutes())
 
 	return r

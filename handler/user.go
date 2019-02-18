@@ -4,15 +4,19 @@ import (
 	"fmt"
 	"net/http"
 	"postastix-api/object"
+	"postastix-api/service"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
 )
 
+var userService *service.UserService
+
 // UserRoutes returns router of user handlers.
 func UserRoutes() chi.Router {
-	r := chi.NewRouter()
+	userService = service.NewUserService()
 
+	r := chi.NewRouter()
 	r.Get("/", getUsers)
 
 	return r
