@@ -5,13 +5,13 @@ WORKDIR /go/src/postastix-api
 ADD . .
 
 RUN go get -v ./...
-RUN go build *.go
+RUN go build
 
 FROM alpine
 
 WORKDIR /usr/bin
 
-COPY --from=build /go/src/postastix-api/main postastix
-RUN chmod a+x postastix
+COPY --from=build /go/src/postastix-api/postastix-api postastix-api
+RUN chmod a+x postastix-api
 
-CMD ["postastix", "serve"]
+CMD ["postastix-api", "serve"]

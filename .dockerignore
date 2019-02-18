@@ -6,4 +6,4 @@
 .env
 
 # Compilation output
-main
+postastix-api

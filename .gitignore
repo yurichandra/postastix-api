@@ -3,4 +3,4 @@
 .env.test
 
 # Compilation output
-main
+postastix-api
