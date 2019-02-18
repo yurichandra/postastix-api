@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"postastix-api/model"
 	"postastix-api/object"
 	"strconv"
 
@@ -16,6 +17,10 @@ func UserRoutes() chi.Router {
 	r := chi.NewRouter()
 
 	r.Get("/", getUsers)
+	r.Route("/{userID}", func(r chi.Router) {
+		r.Use(userContext)
+		r.Get("/", getUser)
+	})
 
 	return r
 }
@@ -41,4 +46,15 @@ func getUsers(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err.Error())
 		return
 	}
+}
+
+func getUser(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	user, ok := ctx.Value(userCtx).(model.User)
+	if !ok {
+		render.Render(w, r, createUnprocessableEntityResponse(""))
+		return
+	}
+
+	render.Render(w, r, object.CreateUserResponse(user))
 }
