@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
@@ -13,6 +14,15 @@ import (
 func createRouter() chi.Router {
 	handler.InitServices()
 	r := chi.NewRouter()
+
+	r.Get("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		payload := map[string]interface{}{
+			"name":    "Postastix API",
+			"version": 1,
+		}
+		res, _ := json.Marshal(payload)
+		w.Write(res)
+	}))
 
 	r.Mount("/users", handler.UserRoutes())
 
