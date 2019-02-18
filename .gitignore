@@ -1,3 +1,5 @@
+# Env
 .env
-.env*.local
+
+# Compilation output
 app
