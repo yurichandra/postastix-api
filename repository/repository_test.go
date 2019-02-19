@@ -10,6 +10,7 @@ import (
 
 var _testFaker faker.Faker
 var _testUserRepo *UserRepository
+var _testCategoryRepo *CategoryRepository
 
 func TestMain(m *testing.M) {
 	err := godotenv.Load("../.env.test")
@@ -19,6 +20,7 @@ func TestMain(m *testing.M) {
 
 	_testFaker = faker.New()
 	_testUserRepo = NewUserRepository()
+	_testCategoryRepo = NewCategoryRepository()
 
 	m.Run()
 }
