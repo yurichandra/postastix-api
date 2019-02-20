@@ -3,5 +3,6 @@ package handler
 type key string
 
 const (
-	userCtx key = "user"
+	userCtx     key = "user"
+	categoryCtx key = "category"
 )
