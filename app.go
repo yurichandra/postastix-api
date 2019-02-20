@@ -30,6 +30,7 @@ func createRouter() chi.Router {
 	}))
 
 	r.Mount("/users", handler.UserRoutes())
+	r.Mount("/categories", handler.CategoryRoutes())
 
 	return r
 }
