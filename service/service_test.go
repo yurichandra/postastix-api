@@ -10,6 +10,7 @@ import (
 
 var _testFaker faker.Faker
 var _testUserService *UserService
+var _testCategoryService *CategoryService
 
 // TestMain bootstraps the test.
 func TestMain(m *testing.M) {
@@ -20,6 +21,7 @@ func TestMain(m *testing.M) {
 
 	_testFaker = faker.New()
 	_testUserService = NewUserService()
+	_testCategoryService = NewCategoryService()
 
 	m.Run()
 }
